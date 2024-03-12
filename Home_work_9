@@ -1,0 +1,178 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyN9YZa8qxIv8KEd8NZf5ECT",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/DDD86/Home_Work-Python-/blob/main/Home_work_9\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Даны значения величины заработной платы заемщиков банка (zp) и значения их поведенческого кредитного скоринга (ks): zp = [35, 45, 190, 200, 40, 70, 54, 150, 120, 110], ks = [401, 574, 874, 919, 459, 739, 653, 902, 746, 832]. Используя математические операции, посчитать коэффициенты линейной регрессии, приняв за X заработную плату (то есть, zp - признак), а за y - значения скорингового балла (то есть, ks - целевая переменная). Произвести расчет как с использованием intercept, так и без.**"
+      ],
+      "metadata": {
+        "id": "RrVMpniA6h0z"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import numpy as np\n",
+        "zp = np.array([35, 45, 190, 200, 40, 70, 54, 150, 120, 110])\n",
+        "ks = np.array([401, 574, 874, 919, 459, 739, 653, 902, 746, 832])\n",
+        "\n",
+        "b_without_intercept = np.sum(zp * ks) / np.sum(zp**2)\n",
+        "\n",
+        "\n",
+        "n = len(zp)\n",
+        "b_with_intercept = (n * np.sum(zp * ks) - np.sum(zp) * np.sum(ks)) / (n * np.sum(zp**2) - np.sum(zp)**2)\n",
+        "a_with_intercept = (np.sum(ks) - b_with_intercept * np.sum(zp)) / n\n",
+        "\n",
+        "print(\"Коэффициенты линейной регрессии без интерсепта:\")\n",
+        "print(\"b =\", b_without_intercept)\n",
+        "\n",
+        "print(\"\\nКоэффициенты линейной регрессии с интерсептом:\")\n",
+        "print(\"a =\", a_with_intercept)\n",
+        "print(\"b =\", b_with_intercept)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "AzBgcB726k6C",
+        "outputId": "07fe805c-c219-4bfe-811c-77678c7571e0"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Коэффициенты линейной регрессии без интерсепта:\n",
+            "b = 5.889820420132689\n",
+            "\n",
+            "Коэффициенты линейной регрессии с интерсептом:\n",
+            "a = 444.1773573243596\n",
+            "b = 2.6205388824027653\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Посчитать коэффициент линейной регрессии при заработной плате (zp), используя градиентный спуск (без intercept).**"
+      ],
+      "metadata": {
+        "id": "ojgvjeBt6uZG"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "zp = np.array([35, 45, 190, 200, 40, 70, 54, 150, 120, 110])\n",
+        "ks = np.array([401, 574, 874, 919, 459, 739, 653, 902, 746, 832])\n",
+        "\n",
+        "learning_rate = 0.0001\n",
+        "num_iterations = 1000\n",
+        "\n",
+        "b = 0\n",
+        "\n",
+        "for i in range(num_iterations):\n",
+        "    b_gradient = np.mean((b * zp - ks) * zp)\n",
+        "    b -= learning_rate * b_gradient\n",
+        "\n",
+        "print(\"Коэффициент линейной регрессии при заработной плате (без интерсепта):\", b)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "20EG7GuK62eM",
+        "outputId": "8b80b988-061b-467a-a684-2a9f2c6e8ff5"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Коэффициент линейной регрессии при заработной плате (без интерсепта): 5.889820420132689\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Произвести вычисления как в пункте 2, но с вычислением intercept. Учесть, что изменение коэффициентов должно производиться на каждом шаге одновременно (то есть изменение одного коэффициента не должно влиять на изменение другого во время одной итерации).**"
+      ],
+      "metadata": {
+        "id": "Sqed5CTm7GEx"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "zp = np.array([35, 45, 190, 200, 40, 70, 54, 150, 120, 110])\n",
+        "ks = np.array([401, 574, 874, 919, 459, 739, 653, 902, 746, 832])\n",
+        "\n",
+        "learning_rate = 0.0001\n",
+        "num_iterations = 1000\n",
+        "\n",
+        "a = 0\n",
+        "b = 0\n",
+        "\n",
+        "for i in range(num_iterations):\n",
+        "    a_gradient = np.mean(-2 * (ks - (a + b * zp)))\n",
+        "    b_gradient = np.mean(-2 * (ks - (a + b * zp)) * zp)\n",
+        "    a -= learning_rate * a_gradient\n",
+        "    b -= learning_rate * b_gradient\n",
+        "\n",
+        "print(\"Коэффициенты линейной регрессии с интерсептом:\")\n",
+        "print(\"a =\", a)\n",
+        "print(\"b =\", b)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "KvS1XG627MQW",
+        "outputId": "ee73066f-e13e-4e14-82e4-adfd3510867b"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Коэффициенты линейной регрессии с интерсептом:\n",
+            "a = -1.072057860005768e+243\n",
+            "b = -1.4565128585233326e+245\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
